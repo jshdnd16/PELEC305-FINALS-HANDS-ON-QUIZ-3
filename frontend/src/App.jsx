@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const API_URL = "http://127.0.0.1:8000/api/tasks/";
+const API_URL = "https://joshua03.pythonanywhere.com/api/tasks/";
 
 // Format date to Philippine Standard Time (UTC+8)
 function formatPHTime(isoString) {
