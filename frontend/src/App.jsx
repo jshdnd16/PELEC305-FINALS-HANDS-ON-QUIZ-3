@@ -1,7 +1,22 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const API_URL = "https://joshua03.pythonanywhere.com/api/tasks/";
+const API_URL = "http://127.0.0.1:8000/api/tasks/";
+
+// Format date to Philippine Standard Time (UTC+8)
+function formatPHTime(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  return date.toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
@@ -95,6 +110,10 @@ export default function App() {
             </svg>
             TaskFlow
           </div>
+          <div className="header-right">
+            <span className="ph-time-badge">🇵🇭 PST (UTC+8)</span>
+            {total > 0 && <span className="header-badge">{completed}/{total} done</span>}
+          </div>
         </div>
       </header>
 
@@ -111,20 +130,11 @@ export default function App() {
               <div className="progress-pct">{pct}%</div>
             </div>
             <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{ width: `${pct}%` }}
-              />
+              <div className="progress-fill" style={{ width: `${pct}%` }} />
             </div>
             <div className="progress-stats">
-              <span className="stat stat-pending">
-                <span className="stat-dot dot-pending" />
-                {total - completed} pending
-              </span>
-              <span className="stat stat-done">
-                <span className="stat-dot dot-done" />
-                {completed} completed
-              </span>
+              <span className="stat"><span className="stat-dot dot-pending" />{total - completed} pending</span>
+              <span className="stat"><span className="stat-dot dot-done" />{completed} completed</span>
             </div>
           </section>
         )}
@@ -173,15 +183,12 @@ export default function App() {
 
           {loading ? (
             <div className="skeletons">
-              <div className="skeleton" />
-              <div className="skeleton" style={{ width: "80%" }} />
-              <div className="skeleton" style={{ width: "60%" }} />
+              <div className="skeleton" /><div className="skeleton" style={{width:"80%"}}/><div className="skeleton" style={{width:"60%"}}/>
             </div>
           ) : tasks.length === 0 ? (
             <div className="empty">
               <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M9 12h6M12 9v6"/>
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/>
               </svg>
               <p>No tasks yet — add one above!</p>
             </div>
@@ -190,7 +197,7 @@ export default function App() {
               {tasks.map((task) => (
                 <li key={task.id} className={`task-item ${task.is_completed ? "is-done" : ""} ${togglingId === task.id ? "is-toggling" : ""}`}>
 
-                  {/* Checkbox toggle */}
+                  {/* Checkbox */}
                   <button
                     className={`check-btn ${task.is_completed ? "checked" : ""}`}
                     onClick={() => handleToggle(task)}
@@ -206,8 +213,18 @@ export default function App() {
                     ) : null}
                   </button>
 
-                  {/* Title */}
-                  <span className="task-title">{task.title}</span>
+                  {/* Title + date */}
+                  <div className="task-body">
+                    <span className="task-title">{task.title}</span>
+                    {task.created_at && (
+                      <span className="task-date">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                        {formatPHTime(task.created_at)}
+                      </span>
+                    )}
+                  </div>
 
                   {/* Status pill */}
                   <span className={`pill ${task.is_completed ? "pill-done" : "pill-pending"}`}>
