@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const API_URL = "https://joshua03.pythonanywhere.com/api/tasks/";
+const API_URL = "http://127.0.0.1:8000/api/tasks/";
 
 // Format date to Philippine Standard Time (UTC+8)
 function formatPHTime(isoString) {
@@ -110,10 +110,7 @@ export default function App() {
             </svg>
             TaskFlow
           </div>
-          <div className="header-right">
-            <span className="ph-time-badge">🇵🇭 PST (UTC+8)</span>
-            {total > 0 && <span className="header-badge">{completed}/{total} done</span>}
-          </div>
+
         </div>
       </header>
 
